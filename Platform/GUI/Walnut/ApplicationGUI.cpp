@@ -887,8 +887,8 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
         UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f),
         buttonColP);
   }
-
   /* ImGui::Spring(-1.0f, 18.0f); */
+
   /* ImGui::EndHorizontal(); */
 
   outTitlebarHeight = titlebarHeight;
