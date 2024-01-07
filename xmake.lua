@@ -1,6 +1,6 @@
 --- @diagnostic disable:undefined-global
-add_requires('imgui-walnut v1.66-docking', { configs = { glfw = true, vulkan = true } })
-add_requires('glfw-walnut 3.3.2', { configs = { glfw_include = 'vulkan' } })
+add_requires('imgui-walnut walnut', { configs = { glfw = true, vulkan = true } })
+add_requires('glfw-walnut walnut', { configs = { glfw_include = 'vulkan' } })
 add_requires('glm')
 add_requires('stb')
 add_requires('spdlog')
