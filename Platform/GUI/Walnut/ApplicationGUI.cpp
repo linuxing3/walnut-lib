@@ -7,7 +7,6 @@
 // Adapted from Dear ImGui Vulkan example
 //
 
-#include "imgui.h"
 #include "imgui_internal.h"
 
 #include "backends/imgui_impl_glfw.h"
@@ -469,11 +468,11 @@ void Application::Init() {
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
   if (m_Specification.CustomTitlebar) {
-    /* glfwWindowHint(GLFW_TITLEBAR, false); */
+    glfwWindowHint(GLFW_TITLEBAR, false);
 
     // NOTE(Yan): Undecorated windows are probably
     //            also desired, so make this an option
-    glfwWindowHint(GLFW_DECORATED, false);
+    // glfwWindowHint(GLFW_DECORATED, false);
   }
 
   GLFWmonitor *primaryMonitor = glfwGetPrimaryMonitor();
@@ -519,12 +518,11 @@ void Application::Init() {
   }
 
   glfwSetWindowUserPointer(m_WindowHandle, this);
-  /* glfwSetTitlebarHitTestCallback( */
-  /*     m_WindowHandle, [](GLFWwindow *window, int x, int y, int *hit) { */
-  /*       Application *app = (Application *)glfwGetWindowUserPointer(window);
-   */
-  /*       *hit = app->IsTitleBarHovered(); */
-  /*     }); */
+  glfwSetTitlebarHitTestCallback(
+      m_WindowHandle, [](GLFWwindow *window, int x, int y, int *hit) {
+        Application *app = (Application *)glfwGetWindowUserPointer(window);
+        *hit = app->IsTitleBarHovered();
+      });
 
   uint32_t extensions_count = 0;
   const char **extensions =
@@ -625,7 +623,7 @@ void Application::Init() {
     err = vkBeginCommandBuffer(command_buffer, &begin_info);
     check_vk_result(err);
 
-    ImGui_ImplVulkan_CreateFontsTexture();
+    ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
 
     VkSubmitInfo end_info = {};
     end_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -638,7 +636,7 @@ void Application::Init() {
 
     err = vkDeviceWaitIdle(g_Device);
     check_vk_result(err);
-    ImGui_ImplVulkan_DestroyFontsTexture();
+    ImGui_ImplVulkan_DestroyFontUploadObjects();
   }
 
   // Load images
@@ -758,11 +756,10 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
     fgDrawList->AddImage(m_AppHeaderIcon->GetDescriptorSet(), logoRectStart,
                          logoRectMax);
   }
-  /* ImGui::BeginHorizontal("Titlebar", */
 
-  /*                        {ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
-   */
-  /*                         ImGui::GetFrameHeightWithSpacing()}); */
+  ImGui::BeginHorizontal("Titlebar",
+                         {ImGui::GetWindowWidth() - windowPadding.y * 2.0f,
+                          ImGui::GetFrameHeightWithSpacing()});
 
   static float moveOffsetX;
   static float moveOffsetY;
@@ -794,7 +791,7 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
 
   // Draw Menubar
   if (m_MenubarCallback) {
-    /* ImGui::SuspendLayout(); */
+    ImGui::SuspendLayout();
     {
       ImGui::SetItemAllowOverlap();
       const float logoHorizontalOffset = 16.0f * 2.0f + 48.0f + windowPadding.x;
@@ -806,7 +803,7 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
         m_TitleBarHovered = false;
     }
 
-    /* ImGui::ResumeLayout(); */
+    ImGui::ResumeLayout();
   }
 
   {
@@ -831,7 +828,7 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
 
   // Minimize Button
 
-  ImGui::Spacing();
+  ImGui::Spring();
   UI::ShiftCursorY(8.0f);
   {
     const int iconWidth = m_IconMinimize->GetWidth();
@@ -851,7 +848,7 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
   }
 
   // Maximize Button
-  ImGui::Spacing();
+  ImGui::Spring(-1.0f, 17.0f);
   UI::ShiftCursorY(8.0f);
   {
     const int iconWidth = m_IconMaximize->GetWidth();
@@ -874,7 +871,7 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
   }
 
   // Close Button
-  /* ImGui::Spring(-1.0f, 15.0f); */
+  ImGui::Spring(-1.0f, 15.0f);
   UI::ShiftCursorY(8.0f);
   {
     const int iconWidth = m_IconClose->GetWidth();
@@ -887,9 +884,9 @@ void Application::UI_DrawTitlebar(float &outTitlebarHeight) {
         UI::Colors::ColorWithMultipliedValue(UI::Colors::Theme::text, 1.4f),
         buttonColP);
   }
-  /* ImGui::Spring(-1.0f, 18.0f); */
 
-  /* ImGui::EndHorizontal(); */
+  ImGui::Spring(-1.0f, 18.0f);
+  ImGui::EndHorizontal();
 
   outTitlebarHeight = titlebarHeight;
 }
