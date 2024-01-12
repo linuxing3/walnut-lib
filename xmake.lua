@@ -1,39 +1,16 @@
 --- @diagnostic disable:undefined-global
-add_requires('imgui-walnut walnut', { configs = { glfw = true, vulkan = true } })
-add_requires('glfw-walnut walnut', { configs = { glfw_include = 'vulkan' } })
-add_requires('glm')
-add_requires('stb')
-add_requires('spdlog')
-add_requires('vulkan-headers')
 
-if is_os('windows') then
-    target('Walnut')
-    set_languages('c++20')
-    set_kind('static')
-    add_files('Source/**.cpp', 'Platform/GUI/**.cpp')
-    add_includedirs('Source')
-    add_includedirs('Platform')
-    add_packages('imgui-walnut')
-    add_packages('glfw-walnut')
-    add_links('glfw-walnut')
-    add_packages('glm')
-    add_packages('stb')
-    add_packages('spdlog')
-    add_packages('vulkan-headers')
-else
-    target('Walnut')
-    set_languages('c++20')
-    set_kind('static')
-    add_files('Source/**.cpp', 'Platform/GUI/**.cpp')
-    add_defines('GLFW_INCLUDE_NONE')
-    add_defines('GLFW_INCLUDE_VULKAN')
-    add_includedirs('Source')
-    add_includedirs('Platform/GUI')
-    add_packages('imgui-walnut')
-    add_packages('glfw-walnut')
-    add_links('glfw-walnut')
-    add_packages('glm')
-    add_packages('stb')
-    add_packages('vulkan-headers')
-    add_packages('spdlog')
-end
+set_project('walnut-lib')
+
+set_version('0.0.1')
+
+set_xmakever('2.7.9')
+
+set_warnings('all')
+set_languages('c++20')
+
+add_repositories('xrepos xmake/repos')
+
+set_allowedplats('windows', 'linux', 'macosx')
+
+includes('xmake', 'build.lua')

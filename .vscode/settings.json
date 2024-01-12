@@ -1,0 +1,6 @@
+{
+  "Lua.hover.enable": true,
+  "Lua.diagnostics.disable": ["undefined-global"],
+  "Lua.diagnostics.enable": true,
+  "Lua.diagnostics.globals": ["vim", "discribe", "it", "for_each", "after_each"]
+}
