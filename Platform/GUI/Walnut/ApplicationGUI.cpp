@@ -26,12 +26,13 @@
 
 #include <iostream>
 
+bool g_ApplicationRunning = true;
 // Emedded font
 #include "ImGui/Roboto-Bold.embed"
 #include "ImGui/Roboto-Italic.embed"
 #include "ImGui/Roboto-Regular.embed"
 
-extern bool g_ApplicationRunning;
+/* extern bool g_ApplicationRunning; */
 
 // [Win32] Our example includes a copy of glfw3.lib pre-compiled with VS2010 to
 // maximize ease of testing and compatibility with old VS compilers. To link

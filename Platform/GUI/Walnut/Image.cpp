@@ -28,33 +28,33 @@ static uint32_t GetVulkanMemoryType(VkMemoryPropertyFlags properties,
 
 static uint32_t BytesPerPixel(ImageFormat format) {
   switch (format) {
-    case ImageFormat::RGBA:
-      return 4;
-    case ImageFormat::RGBA32F:
-      return 16;
+  case ImageFormat::RGBA:
+    return 4;
+  case ImageFormat::RGBA32F:
+    return 16;
   }
   return 0;
 }
 
 static VkFormat WalnutFormatToVulkanFormat(ImageFormat format) {
   switch (format) {
-    case ImageFormat::RGBA:
-      return VK_FORMAT_R8G8B8A8_UNORM;
-    case ImageFormat::RGBA32F:
-      return VK_FORMAT_R32G32B32A32_SFLOAT;
+  case ImageFormat::RGBA:
+    return VK_FORMAT_R8G8B8A8_UNORM;
+  case ImageFormat::RGBA32F:
+    return VK_FORMAT_R32G32B32A32_SFLOAT;
   }
   return (VkFormat)0;
 }
 
-}  // namespace Utils
+} // namespace Utils
 
 Image::Image(std::string_view path) : m_Filepath(path) {
   int width, height, channels;
-  uint8_t* data = nullptr;
+  uint8_t *data = nullptr;
 
   if (stbi_is_hdr(m_Filepath.c_str())) {
-    data =
-        (uint8_t*)stbi_loadf(m_Filepath.c_str(), &width, &height, &channels, 4);
+    data = (uint8_t *)stbi_loadf(m_Filepath.c_str(), &width, &height, &channels,
+                                 4);
     m_Format = ImageFormat::RGBA32F;
   } else {
     data = stbi_load(m_Filepath.c_str(), &width, &height, &channels, 4);
@@ -70,7 +70,7 @@ Image::Image(std::string_view path) : m_Filepath(path) {
 }
 
 Image::Image(uint32_t width, uint32_t height, ImageFormat format,
-             const void* data)
+             const void *data)
     : m_Width(width), m_Height(height), m_Format(format) {
   AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
   if (data)
@@ -178,7 +178,7 @@ void Image::Release() {
   m_StagingBufferMemory = nullptr;
 }
 
-void Image::SetData(const void* data) {
+void Image::SetData(const void *data) {
   VkDevice device = Application::GetDevice();
 
   size_t upload_size = m_Width * m_Height * Utils::BytesPerPixel(m_Format);
@@ -214,9 +214,9 @@ void Image::SetData(const void* data) {
 
   // Upload to Buffer
   {
-    char* map = NULL;
+    char *map = NULL;
     err = vkMapMemory(device, m_StagingBufferMemory, 0, m_AlignedSize, 0,
-                      (void**)(&map));
+                      (void **)(&map));
     check_vk_result(err);
     memcpy(map, data, upload_size);
     VkMappedMemoryRange range[1] = {};
@@ -289,13 +289,13 @@ void Image::Resize(uint32_t width, uint32_t height) {
   AllocateMemory(m_Width * m_Height * Utils::BytesPerPixel(m_Format));
 }
 
-void* Image::Decode(const void* buffer, uint64_t length, uint32_t& outWidth,
-                    uint32_t& outHeight) {
+void *Image::Decode(const void *buffer, uint64_t length, uint32_t &outWidth,
+                    uint32_t &outHeight) {
   int width, height, channels;
-  uint8_t* data = nullptr;
+  uint8_t *data = nullptr;
   uint64_t size = 0;
 
-  data = stbi_load_from_memory((const stbi_uc*)buffer, length, &width, &height,
+  data = stbi_load_from_memory((const stbi_uc *)buffer, length, &width, &height,
                                &channels, 4);
   size = width * height * 4;
 
@@ -305,4 +305,4 @@ void* Image::Decode(const void* buffer, uint64_t length, uint32_t& outWidth,
   return data;
 }
 
-}  // namespace Walnut
+} // namespace Walnut
