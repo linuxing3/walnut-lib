@@ -12,6 +12,7 @@ CXX = meson.get_compiler('cpp')
 #@ Project variables
 libimgui_project = subproject('imgui-walnut')
 libimgui_dep = libimgui_project.get_variable('imgui')
+
 libglfw_project = subproject('glfw-walnut')
 libglfw_dep = libglfw_project.get_variable('glfw')
 
@@ -22,7 +23,7 @@ add_project_arguments('-DGLFW_INCLUDE_NONE', '-DGLFW_INCLUDE_VULKAN', '-std=c++2
 
 ### Dependencies ###
 deps = []
-deps += dependency('spdlog', 'vulkan')
+deps += dependency('spdlog')
 foreach lib_name : libs_to_link 
   deps += CXX.find_library(lib_name, dirs : [ libvulkan_path ])
 endforeach
@@ -45,7 +46,7 @@ srcfiles = files(
   './Platform/GUI/Walnut/UI/Console.cpp',
   './Platform/GUI/Walnut/UI/UI.cpp',
 )
-incdirs = include_directories('Source', 'vendor/stb', 'Platform/GUI', 'subprojects/imgui-walnut', 'subprojects/glfw-walnut/include')
+incdirs = include_directories('Source', 'Platform/GUI', 'vendor/stb', 'subprojects/imgui-walnut', 'subprojects/glfw-walnut/include')
 
 #  Build
 walnut = library(
@@ -62,6 +63,7 @@ walnut_dep = declare_dependency(
   include_directories: incdirs,
   link_with: walnut,
 )
+
 ### Post
 #@ Pkg-config
 if get_option('install')
@@ -74,3 +76,15 @@ if get_option('install')
     filebase: 'walnut',
   )
 endif
+
+### Post
+#@ test
+testfiles = files('test/app.cpp')
+# Build test app
+walnutapp = executable(
+  'walnutapp',
+  testfiles,
+  include_directories: incdirs,
+  build_by_default: true,
+  link_with: [ walnut , libglfw_dep, libimgui_dep ],
+)

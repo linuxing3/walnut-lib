@@ -1,5 +1,7 @@
 build
-.xmake/linux/x86_64
+xmake_build
+meson_build
+.xmake
 compile_commands.json
 subprojects
-vendor/stb
+imgui.ini
